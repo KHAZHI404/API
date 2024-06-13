@@ -1,10 +1,10 @@
-// import {VideoDBType} from '../src/db/video-db-type'
-// import {Resolutions} from '../src/input-output-types/video-types'
+import {VideoDBType} from '../src/db/video-db-type'
+import {Resolutions} from '../src/input-output-types/video-types'
 import {DBType} from '../src/db/db'
 
 // готовые данные для переиспользования в тестах
 
-export const video1: any /*VideoDBType*/ = {
+export const video1: VideoDBType = {
     id: Date.now() + Math.random(),
     title: 't' + Date.now() + Math.random(),
     author: 'a' + Date.now() + Math.random(),
@@ -12,7 +12,7 @@ export const video1: any /*VideoDBType*/ = {
     minAgeRestriction: null,
     createdAt: new Date().toISOString(),
     publicationDate: new Date().toISOString(),
-    availableResolution: ['P240']  //[Resolutions.P240],
+    availableResolution: [Resolutions.P240],
 }
 
 // ...
