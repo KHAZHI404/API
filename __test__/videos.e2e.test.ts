@@ -2,6 +2,7 @@ import {req} from './test-helpers'
 import {setDB} from '../src/db/db'
 import {dataset1} from './datasets'
 import {SETTINGS} from '../src/settings'
+import {VideoDBType} from "../src/db/video-db-type";
 
 describe('/videos', () => {
 
@@ -18,21 +19,9 @@ describe('/videos', () => {
         expect(res.body.length).toBe(0) // проверяем ответ эндпоинта
     })
 
-    // it('should return 200 and get not empty array', async () => {
-    //     setDB(dataset1) // заполнение базы данных начальными данными если нужно
-    //
-    //     const res = await req
-    //         .get(SETTINGS.PATH.VIDEOS)
-    //         .expect(SETTINGS.HTTP_STATUSES.OK_200)
-    //
-    //
-    //     expect(res.body.length).toBe(1)
-    //     expect(res.body[0]).toEqual(dataset1.videos[0])
-    // })
-
     it('should return 404 for not existing video', async () => {
         await req
-            .get(`${SETTINGS.PATH.VIDEOS}/1`)
+            .get(`${SETTINGS.PATH.VIDEOS}/-100`)
             .expect(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
     })
 
@@ -50,7 +39,7 @@ describe('/videos', () => {
     })
 
 
-    let createdVideo1: any = null
+    let createdVideo1: VideoDBType;
     it("should create video with correct input data", async () => {
         const res = await req
             .post(SETTINGS.PATH.VIDEOS)
@@ -60,14 +49,14 @@ describe('/videos', () => {
         createdVideo1 = res.body
 
         expect(createdVideo1).toEqual({
-            id: expect.any(Number),
+            id: expect.any(String),
             title: 'new title',
             author: 'new author',
             canBeDownloaded: expect.any(Boolean),
             minAgeRestriction: null,
             createdAt: expect.any(String),
             publicationDate: expect.any(String),
-            availableResolutions: [
+            availableResolution: [
                 expect.any(String)
             ]
         })
@@ -106,7 +95,7 @@ describe('/videos', () => {
             .expect(SETTINGS.HTTP_STATUSES.OK_200, [{...createdVideo1, title: 'nice title', author: 'nice author'}])
     })
 
-    let createdVideo2: any = null
+    let createdVideo2: VideoDBType;
     it("should create second video with correct input data", async () => {
         const res = await req
             .post(SETTINGS.PATH.VIDEOS)
@@ -116,14 +105,14 @@ describe('/videos', () => {
         createdVideo2 = res.body
 
         expect(createdVideo2).toEqual({
-            id: expect.any(Number),
+            id: expect.any(String),
             title: 'new second title',
             author: 'new second author',
             canBeDownloaded: expect.any(Boolean),
             minAgeRestriction: null,
             createdAt: expect.any(String),
             publicationDate: expect.any(String),
-            availableResolutions: [
+            availableResolution: [
                 expect.any(String)
             ]
         })

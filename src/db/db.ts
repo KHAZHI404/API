@@ -1,37 +1,34 @@
 // простая база данных:
 
-// import {VideoDBType} from './video-db-type'
+import {VideoDBType} from './video-db-type'
+import {Resolutions} from "../input-output-types/video-types";
 
 export type DBType = { // типизация базы данных (что мы будем в ней хранить)
-    videos: any[] // VideoDBType[]
+    videos:  VideoDBType[]
     // some: any[]
 }
 
 export const db: DBType = { // создаём базу данных (пока это просто переменная)
     videos: [
         {
-        "id": 1,
+        "id": '1',
         "title": "string1",
         "author": "string1",
         "canBeDownloaded": true,
         "minAgeRestriction": null,
         "createdAt": "2024-06-11T14:36:52.380Z",
         "publicationDate": "2024-06-11T14:36:52.380Z",
-        "availableResolutions": [
-            "P144"
-        ]
+        "availableResolution": [Resolutions.P144]
     },
         {
-            "id": 2,
+            "id": '2',
             "title": "string2",
             "author": "string2",
             "canBeDownloaded": true,
             "minAgeRestriction": null,
             "createdAt": "2024-06-11T14:36:52.380Z",
             "publicationDate": "2024-06-11T14:36:52.380Z",
-            "availableResolutions": [
-                "P240"
-            ]
+            "availableResolution": [Resolutions.P240]
         }
         ],
     // some: []
