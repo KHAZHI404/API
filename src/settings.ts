@@ -8,6 +8,8 @@ export const SETTINGS = {
     PORT: process.env.PORT || 3003,
     PATH: {
         VIDEOS: '/videos',
+        BLOGS: '/blogs',
+        POSTS: '/posts',
     },
     HTTP_STATUSES: {
         OK_200: 200,

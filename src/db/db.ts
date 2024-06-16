@@ -1,10 +1,13 @@
 // простая база данных:
 
-import {VideoDBType} from './video-db-type'
-import {Resolutions} from "../input-output-types/video-types";
+import {Resolutions, VideoDBType} from "../input-output-types/video-types";
+import {BlogDBType} from "../input-output-types/blog-types";
+import {PostDBType} from "../input-output-types/post-types";
 
 export type DBType = { // типизация базы данных (что мы будем в ней хранить)
     videos:  VideoDBType[]
+    blogs:  BlogDBType[]
+    posts: PostDBType[]
     // some: any[]
 }
 
@@ -31,6 +34,38 @@ export const db: DBType = { // создаём базу данных (пока э
             "availableResolution": [Resolutions.P240]
         }
         ],
+    blogs: [
+        {
+            "id": "1",
+            "name": 'blog name 1',
+            "description": 'blog description 1',
+            "websiteUrl": 'blog websiteUrl 1',
+        },
+        {
+            "id": "2",
+            "name": 'blog name 2',
+            "description": 'blog description 2',
+            "websiteUrl": 'blog websiteUrl 2',
+        }
+    ],
+    posts: [
+        {
+            "id": "1",
+            "title": "string 1",
+            "shortDescription": "string 1",
+            "content": "string 1",
+            "blogId": "1",
+            "blogName": "string 1"
+        },
+        {
+            "id": "2",
+            "title": "string 2",
+            "shortDescription": "string 2",
+            "content": "string 2",
+            "blogId": "1",
+            "blogName": "string 2"
+        }
+    ]
     // some: []
 }
 
@@ -38,6 +73,8 @@ export const db: DBType = { // создаём базу данных (пока э
 export const setDB = (dataset?: Partial<DBType>) => {
     if (!dataset) { // если в функцию ничего не передано - то очищаем базу данных
         db.videos = []
+        db.blogs = []
+        db.posts = []
         // db.some = []
         return
     }

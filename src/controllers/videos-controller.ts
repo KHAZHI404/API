@@ -1,7 +1,7 @@
 import {Response, Request} from 'express'
 import {OutputVideoType} from '../input-output-types/video-types'
 import {SETTINGS} from "../settings";
-import {videosRepository} from "./videos-repository";
+import {videosRepository} from "../repositories/videos-repository";
 
 
 export const getVideosController = (req: Request, res: Response<OutputVideoType[]>) => {
@@ -10,11 +10,6 @@ export const getVideosController = (req: Request, res: Response<OutputVideoType[
 }
 
 export const postVideosController = (req: Request, res: Response) => {
-    if (!req.body.title || !req.body.author) {
-        res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send('Please enter a title and author');
-        return
-    }
-
     const newVideo = videosRepository.createVideo(req.body.title, req.body.author)
     res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(newVideo);
 };
@@ -26,11 +21,6 @@ export const findVideoController = (req: Request, res: Response) => {
 }
 
 export const updateVideoController = (req: Request, res: Response) => {
-    if (!req.body.title || !req.body.author) {
-        res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send('Please enter a title (author)')
-        return
-    }
-
     const isUpdated = videosRepository.updateVideo(req.params.videoId, req.body.title, req.body.author)
     if (isUpdated) {
         const video = videosRepository.findVideoById(req.params.videoId)

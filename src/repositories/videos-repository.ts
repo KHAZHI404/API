@@ -1,7 +1,5 @@
 import {db} from '../db/db'
-import {VideoDBType} from "../db/video-db-type";
-import {Resolutions} from "../input-output-types/video-types";
-import {SETTINGS} from "../settings";
+import {Resolutions, VideoDBType} from "../input-output-types/video-types";
 
 
 export const videosRepository = {

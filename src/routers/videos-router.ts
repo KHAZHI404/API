@@ -5,16 +5,28 @@ import {
     getVideosController,
     postVideosController,
     updateVideoController,
-} from "./videos-controller";
+} from "../controllers/videos-controller";
 import {Router} from "express";
+import {errorsValidationMiddleware} from "../middlewares/errorsValidationMiddleware";
+import {videoValidation} from "../middlewares/videoInputValidation";
 
 export const videosRouter = Router({})
 
 
-
 videosRouter.get('/', getVideosController);
-videosRouter.post('/', postVideosController);
+
+videosRouter.post('/',
+    videoValidation,
+    errorsValidationMiddleware,
+    postVideosController);
+
 videosRouter.get('/:videoId', findVideoController);
-videosRouter.put('/:videoId', updateVideoController);
+
+videosRouter.put('/:videoId',
+    videoValidation,
+    errorsValidationMiddleware,
+    updateVideoController);
+
 videosRouter.delete('/:videoId', deleteVideoController);
+
 videosRouter.delete('/testing/all-data', deleteAllVideosController)

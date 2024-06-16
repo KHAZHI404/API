@@ -1,8 +1,7 @@
 import {req} from './test-helpers'
 import {setDB} from '../src/db/db'
-import {dataset1} from './datasets'
 import {SETTINGS} from '../src/settings'
-import {VideoDBType} from "../src/db/video-db-type";
+import {VideoDBType} from "../src/input-output-types/video-types";
 
 describe('/videos', () => {
 
@@ -34,6 +33,7 @@ describe('/videos', () => {
         const res = await req
             .get(SETTINGS.PATH.VIDEOS)
             .expect(SETTINGS.HTTP_STATUSES.OK_200)
+        console.log(res.body)
 
         expect(res.body.length).toBe(0)
     })

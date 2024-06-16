@@ -9,7 +9,16 @@ export enum Resolutions  {
     P2160 = "P2160"
 }
 
-
+export interface VideoDBType {
+    id: string
+    title: string
+    author: string
+    canBeDownloaded: boolean
+    minAgeRestriction: number | null
+    createdAt: string
+    publicationDate: string
+    availableResolution: Resolutions[]
+}
 
 export interface InputVideoType {
     title: string;
@@ -18,12 +27,12 @@ export interface InputVideoType {
 }
 
 export interface OutputVideoType {
-    id: string;
-    title: string;
-    author: string;
-    canBeDownloaded: boolean;
-    minAgeRestriction: number | null;
-    createdAt: string;
-    publicationDate: string;
-    availableResolution: Resolutions[];
+    id: string
+    title: string
+    author: string
+    canBeDownloaded: boolean
+    minAgeRestriction: number | null
+    createdAt: string
+    publicationDate: string
+    availableResolution: Resolutions[]
 }
