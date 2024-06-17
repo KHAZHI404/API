@@ -1,7 +1,9 @@
 import {req} from './test-helpers'
 import {setDB} from '../src/db/db'
 import {SETTINGS} from '../src/settings'
-import {VideoDBType} from "../src/input-output-types/video-types";
+import {InputVideoType, VideoDBType} from "../src/input-output-types/video-types";
+import {videosTestManager} from "./videosTestManager";
+
 
 describe('/videos', () => {
 
@@ -25,41 +27,25 @@ describe('/videos', () => {
     })
 
     it(`shouldn't create video with incorrect input data`, async () => {
-        await req
-            .post(SETTINGS.PATH.VIDEOS)
-            .send({title: '', author: 'nice author'})
-            .expect(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400)
+        const data = {title: '', author: 'nice author'}
+        await videosTestManager.createVideo(data, SETTINGS.HTTP_STATUSES.BAD_REQUEST_400)
+
 
         const res = await req
             .get(SETTINGS.PATH.VIDEOS)
-            .expect(SETTINGS.HTTP_STATUSES.OK_200)
-        console.log(res.body)
+            .expect(SETTINGS.HTTP_STATUSES.OK_200, [])
 
-        expect(res.body.length).toBe(0)
     })
 
 
     let createdVideo1: VideoDBType;
     it("should create video with correct input data", async () => {
-        const res = await req
-            .post(SETTINGS.PATH.VIDEOS)
-            .send({title: 'new title', author: 'new author'})
-            .expect(SETTINGS.HTTP_STATUSES.CREATED_201)
+        const data: InputVideoType = {title: 'new title', author: 'new author'}
 
-        createdVideo1 = res.body
+        const {createdEntity}  = await videosTestManager.createVideo(data)
 
-        expect(createdVideo1).toEqual({
-            id: expect.any(String),
-            title: 'new title',
-            author: 'new author',
-            canBeDownloaded: expect.any(Boolean),
-            minAgeRestriction: null,
-            createdAt: expect.any(String),
-            publicationDate: expect.any(String),
-            availableResolution: [
-                expect.any(String)
-            ]
-        })
+        createdVideo1 = createdEntity
+
 
         await req
             .get(SETTINGS.PATH.VIDEOS)
@@ -85,42 +71,36 @@ describe('/videos', () => {
     })
 
     it(`should update video with correct input data`, async () => {
+        const data = {title: 'nice title', author: 'nice author'}
         const res = await req
             .put(SETTINGS.PATH.VIDEOS + `/${createdVideo1.id}`)
-            .send({title: 'nice title', author: 'nice author'})
+            .send(data)
             .expect(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
 
         await req
             .get(SETTINGS.PATH.VIDEOS)
-            .expect(SETTINGS.HTTP_STATUSES.OK_200, [{...createdVideo1, title: 'nice title', author: 'nice author'}])
+            .expect(SETTINGS.HTTP_STATUSES.OK_200, [{
+                ...createdVideo1,
+                title: data.title,
+                author: data.author
+            }])
     })
 
     let createdVideo2: VideoDBType;
     it("should create second video with correct input data", async () => {
-        const res = await req
-            .post(SETTINGS.PATH.VIDEOS)
-            .send({title: 'new second title', author: 'new second author'})
-            .expect(SETTINGS.HTTP_STATUSES.CREATED_201)
+        const data = {title: 'new second title', author: 'new second author'}
+        const {createdEntity} = await videosTestManager.createVideo(data)
 
-        createdVideo2 = res.body
-
-        expect(createdVideo2).toEqual({
-            id: expect.any(String),
-            title: 'new second title',
-            author: 'new second author',
-            canBeDownloaded: expect.any(Boolean),
-            minAgeRestriction: null,
-            createdAt: expect.any(String),
-            publicationDate: expect.any(String),
-            availableResolution: [
-                expect.any(String)
-            ]
-        })
+        createdVideo2 = createdEntity
 
         await req
             .get(SETTINGS.PATH.VIDEOS)
             .expect(SETTINGS.HTTP_STATUSES.OK_200, [
-                {...createdVideo1, title: 'nice title', author: 'nice author'},
+                {
+                    ...createdVideo1,
+                    title: 'nice title',
+                    author: 'nice author'
+                },
                 createdVideo2])
     })
 
@@ -146,8 +126,7 @@ describe('/videos', () => {
 
 
 
-
-
-
-
+afterAll(done => {
+    done()
+    })
 })

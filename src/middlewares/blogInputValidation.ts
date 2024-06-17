@@ -7,14 +7,12 @@ export const blogValidation = [
         .trim()
         .notEmpty()
         .isLength({min: 3, max: 15})
-        .withMessage('error in name')
         .escape(),
     body('description')
         .isString()
         .trim()
         .notEmpty()
         .isLength({min: 3, max: 500})
-        .withMessage('error in description')
         .escape(),
     body('websiteUrl')
         .isString()
@@ -22,6 +20,5 @@ export const blogValidation = [
         .notEmpty()
         .isLength({min: 3, max: 100})
         .matches(pattern)
-        .withMessage('error in url')
-        .escape()
+        // .escape()
 ]

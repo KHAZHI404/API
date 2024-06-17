@@ -20,10 +20,10 @@ export interface VideoDBType {
     availableResolution: Resolutions[]
 }
 
-export interface InputVideoType {
-    title: string;
-    author: string;
-    availableResolution: Resolutions[]
+export type InputVideoType = {
+    title: string
+    author: string
+    // availableResolution: Resolutions[]
 }
 
 export interface OutputVideoType {

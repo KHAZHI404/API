@@ -5,6 +5,8 @@ import {BlogDBType} from "../src/input-output-types/blog-types";
 
 
 describe('/blogs', () => {
+    const buff2 = Buffer.from(SETTINGS.ADMIN_AUTH, 'utf8')
+    const codedAuth = buff2.toString('base64')
 
     beforeAll(async () => { // очистка базы данных перед началом тестирования
         setDB()
@@ -28,6 +30,7 @@ describe('/blogs', () => {
     it(`shouldn't create blog with incorrect input data`, async () => {
         await req
             .post(SETTINGS.PATH.BLOGS)
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send({
                 name: '',
                 description: 'nice author',
@@ -48,6 +51,7 @@ describe('/blogs', () => {
     it("should create blog with correct input data", async () => {
         const res = await req
             .post(SETTINGS.PATH.BLOGS)
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send({
                 name: 'BLOG NAME',
                 description: 'nice description',
@@ -72,6 +76,7 @@ describe('/blogs', () => {
     it(`shouldn't update blog with incorrect input data`, async () => {
         await req
             .put(SETTINGS.PATH.BLOGS + `/${createdBlog1.id}`)
+            .set({'Authorization': 'Basic ' + codedAuth})
             .send({name: '', description: 'nice author', websiteUrl:''})
             .expect(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400)
 
@@ -83,57 +88,74 @@ describe('/blogs', () => {
     it(`shouldn't update blog that not exist`, async () => {
         await req
             .put(SETTINGS.PATH.BLOGS + `/-100`)
-            .send({name: 'BLOG NAME', description: 'nice description', websiteUrl:'link'})
+            .set({'Authorization': 'Basic ' + codedAuth})
+            .send({name: 'BLOG NAME',
+                description: 'nice description',
+                websiteUrl:'https://link.com'
+            })
             .expect(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
     })
 
     it(`should update blog with correct input data`, async () => {
+        const data = {
+            name: 'new NAME',
+            description: 'new description',
+            websiteUrl: 'https://link.com'
+        }
         const res = await req
             .put(SETTINGS.PATH.BLOGS + `/${createdBlog1.id}`)
-            .send({name: 'new NAME', description: 'new description', websiteUrl:'new link'})
+            .set({'Authorization': 'Basic ' + codedAuth})
+            .send(data)
             .expect(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
 
         await req
             .get(SETTINGS.PATH.BLOGS)
             .expect(SETTINGS.HTTP_STATUSES.OK_200, [{...createdBlog1,
-                name: 'new NAME',
-                description: 'new description',
-                websiteUrl:'new link'}])
+                name: data.name,
+                description: data.description,
+                websiteUrl: data.websiteUrl
+            }])
     })
 
     let createdBlog2: BlogDBType;
     it("should create second blog with correct input data", async () => {
+        const data = {
+            name: 'BLOG NAME 2',
+            description: 'nice description 2',
+            websiteUrl: 'https://link2.com'}
         const res = await req
             .post(SETTINGS.PATH.BLOGS)
-            .send({name: 'BLOG NAME 2', description: 'nice description 2', websiteUrl: 'link 2'})
+            .set({'Authorization': 'Basic ' + codedAuth})
+            .send(data)
             .expect(SETTINGS.HTTP_STATUSES.CREATED_201)
 
         createdBlog2 = res.body
 
         expect(createdBlog2).toEqual({
             id: expect.any(String),
-            name: 'BLOG NAME 2',
-            description: 'nice description 2',
-            websiteUrl: 'link 2',
-
+            name: data.name,
+            description: data.description,
+            websiteUrl: data.websiteUrl
         })
 
         await req
             .get(SETTINGS.PATH.BLOGS)
             .expect(SETTINGS.HTTP_STATUSES.OK_200, [
-                {...createdBlog1, name: 'new NAME', description: 'new description', websiteUrl: 'new link'},
+                {...createdBlog1, name: 'new NAME', description: 'new description', websiteUrl: 'https://link.com'},
                 createdBlog2])
     })
 
     it(`shouldn't delete blog that not exist`, async () => {
         await req
             .delete(SETTINGS.PATH.BLOGS + `/-100`)
+            .set({'Authorization': 'Basic ' + codedAuth})
             .expect(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
     })
 
     it(`should delete blog`, async () => {
         await req
             .delete(SETTINGS.PATH.BLOGS + `/${createdBlog1.id}`)
+            .set({'Authorization': 'Basic ' + codedAuth})
             .expect(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
 
         await req

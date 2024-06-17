@@ -6,6 +6,7 @@ config() // добавление переменных из файла .env в pr
 export const SETTINGS = {
     // все хардкодные значения должны быть здесь, для удобства их изменения
     PORT: process.env.PORT || 3003,
+    ADMIN_AUTH: 'admin:qwerty',
     PATH: {
         VIDEOS: '/videos',
         BLOGS: '/blogs',
@@ -17,5 +18,6 @@ export const SETTINGS = {
         NO_CONTENT_204: 204,
         BAD_REQUEST_400: 400,
         NOT_FOUND_404: 404,
+        NOT_AUTHORIZED_401: 401,
     }
 }
