@@ -1,15 +1,15 @@
-import {db} from '../db/db'
 import {Resolutions, VideoDBType} from "../input-output-types/video-types";
+import {videoCollection} from "../db/mongodb";
 
 
-export const videosRepository = {
+export const videosDBRepository = {
 
     async findVideos(title: string | null | undefined): Promise<VideoDBType[]> {
+        const filter: any = {}
         if (title) {
-            const searchProducts: VideoDBType[] = db.videos.filter(v => v.title.includes(title))
-            return searchProducts
+            filter.title = { $regex: title, $options: "i" }
         }
-        return db.videos
+        return await videoCollection.find(filter).toArray()
     },
 
     async createVideo(title: string, author: string): Promise<VideoDBType> {
@@ -22,14 +22,14 @@ export const videosRepository = {
             createdAt: new Date().toISOString(),
             publicationDate: new Date().toISOString(),
             availableResolution: [Resolutions.P360]
-        };
+        }
 
-        db.videos.push(newVideo);
+        await videoCollection.insertOne(newVideo)
         return newVideo
     },
 
     async findVideoById(videoId: string): Promise<VideoDBType | null> {
-        const foundVideo = db.videos.find(v => v.id === videoId)
+        const foundVideo: VideoDBType | null = await videoCollection.findOne({videoId: videoId})
         if (foundVideo) {
             return foundVideo
         }
@@ -37,20 +37,18 @@ export const videosRepository = {
     },
 
     async updateVideo(videoId: string, title: string, author: string): Promise<boolean> {
-        const foundVideo = db.videos.find(v => v.id === videoId)
-        if (foundVideo) {
-            foundVideo.title = title
-            foundVideo.author = author
-            return true
-        }
-        return false
+        const result = await videoCollection.updateOne({videoId: videoId}, {
+            $set: {
+                title,
+                author
+            }
+        })
+        return result.matchedCount === 1
     },
 
     async deleteVideo(videoId: string): Promise<boolean> {
-        const foundVideo = db.videos.find(v => v.id === videoId)
-        if (!foundVideo) return false
-        db.videos = db.videos.filter(v => v.id !== videoId)
-        return  true
-    },
+        const result = await videoCollection.deleteOne({videoId})
+        return result.deletedCount === 1
+    }
 
 }

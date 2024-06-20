@@ -1,5 +1,4 @@
 import {
-    deleteAllVideosController,
     deleteVideoController,
     findVideoController,
     getVideosController,
@@ -15,18 +14,11 @@ export const videosRouter = Router({})
 
 videosRouter.get('/', getVideosController);
 
-videosRouter.post('/',
-    videoValidation,
-    errorsValidationMiddleware,
-    postVideosController);
+videosRouter.post('/', videoValidation, errorsValidationMiddleware, postVideosController);
 
 videosRouter.get('/:videoId', findVideoController);
 
-videosRouter.put('/:videoId',
-    videoValidation,
-    errorsValidationMiddleware,
-    updateVideoController);
+videosRouter.put('/:videoId', videoValidation, errorsValidationMiddleware, updateVideoController);
 
 videosRouter.delete('/:videoId', deleteVideoController);
 
-videosRouter.delete('/testing/all-data', deleteAllVideosController)

@@ -16,6 +16,4 @@ app.use(cors()) // разрешить любым фронтам делать з�
 app.use(SETTINGS.PATH.VIDEOS, videosRouter)
 app.use(SETTINGS.PATH.BLOGS, blogsRouter)
 app.use(SETTINGS.PATH.POSTS, postsRouter)
-
-
 app.use(clearDatabase)
