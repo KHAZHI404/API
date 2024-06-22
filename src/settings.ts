@@ -7,7 +7,8 @@ export const SETTINGS = {
     // все хардкодные значения должны быть здесь, для удобства их изменения
     PORT: process.env.PORT || 3003,
     ADMIN_AUTH: "admin:qwerty",
-    MONGO_URL: "mongodb+srv://admin:qwerty123@cluster0.npyz4dt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    MONGO_URL: "mongodb+srv://admin:qwerty123@cluster0.npyz4dt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    || 'mongodb://0.0.0.0:27017',
     DB_NAME: "social-network",
     BLOG_COLLECTION_NAME: "blogs",
     POST_COLLECTION_NAME: "posts",

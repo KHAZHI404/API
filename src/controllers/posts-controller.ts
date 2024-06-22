@@ -1,38 +1,64 @@
 import {Response, Request} from 'express'
 import {SETTINGS} from "../settings"
-import {postsRepository} from "../repositories/posts-repository";
 import {PostDBType} from "../input-output-types/post-types";
+import {postsMongoRepository} from "../repositories/posts-mongo-repository";
+import {ObjectId} from "mongodb";
+import {blogsMongoRepository} from "../repositories/blogs-mongo-repository";
 
 
-export const getPostsController = (req: Request, res: Response) => {
-    const foundPosts = postsRepository.findPosts(req.query.name?.toString())
-    res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundPosts)
+export const getPostsController = async (req: Request, res: Response) => {
+    const foundPosts: PostDBType[] = await postsMongoRepository.findPosts(req.query.name?.toString())
+    return res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundPosts)
 }
 
-export const postPostController = (req: Request, res: Response) => {
-    const newPost: PostDBType = postsRepository.createPost(req.body)
-    res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(newPost);
+export const postPostController = async (req: Request, res: Response) => {
+    const blog = await blogsMongoRepository.findBlogById(req.body.blogId)
+    if (!blog) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Blog not exist");
+    }
+    const newPost: PostDBType = await postsMongoRepository.createPost(req.body, blog.name)
+    return res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(newPost);
 }
 
-export const findPostController = (req: Request, res: Response) => {
-    const foundPost = postsRepository.findPostById(req.params.postId)
-    if (!foundPost) res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
-    res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundPost)
+export const findPostController = async (req: Request, res: Response) => {
+    const postId = req.params.postId;
+    if (!ObjectId.isValid(postId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+    }
+
+    const foundPost: PostDBType | null = await postsMongoRepository.findPostById(postId)
+    if (!foundPost) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    return res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundPost)
 }
 
-export const updatePostController = (req: Request, res: Response) => {
-    const isUpdated = postsRepository.updatePost(req.params.postId, req.body)
+export const updatePostController = async (req: Request, res: Response) => {
+    const blog = await blogsMongoRepository.findBlogById(req.body.blogId)
+    if (!blog) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Blog not exist");
+    }
+
+    const postId = req.params.postId;
+    if (!ObjectId.isValid(postId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+    }
+
+    const isUpdated: boolean = await postsMongoRepository.updatePost(postId, req.body)
     if (isUpdated) {
-        const post = postsRepository.findPostById(req.params.postId)
-        res.status(SETTINGS.HTTP_STATUSES.NO_CONTENT_204).send(post)
+        const post: PostDBType | null = await postsMongoRepository.findPostById(postId)
+        return res.status(SETTINGS.HTTP_STATUSES.NO_CONTENT_204).send(post)
     }
-    res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
 }
 
-export const deletePostController = (req: Request, res: Response) => {
-    const isDeleted = postsRepository.deletePost(req.params.postId)
-    if (isDeleted) {
-        res.sendStatus(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
+export const deletePostController = async (req: Request, res: Response) => {
+    const postId = req.params.postId;
+    if (!ObjectId.isValid(postId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
     }
-    res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+
+    const isDeleted: boolean = await postsMongoRepository.deletePost(postId)
+    if (isDeleted) {
+        return res.sendStatus(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
+    }
+    return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
 }

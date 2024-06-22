@@ -2,7 +2,7 @@ import {Resolutions, VideoDBType} from "../input-output-types/video-types";
 import {videoCollection} from "../db/mongodb";
 
 
-export const videosDBRepository = {
+export const videosMongoRepository = {
 
     async findVideos(title: string | null | undefined): Promise<VideoDBType[]> {
         const filter: any = {}
@@ -29,7 +29,7 @@ export const videosDBRepository = {
     },
 
     async findVideoById(videoId: string): Promise<VideoDBType | null> {
-        const foundVideo: VideoDBType | null = await videoCollection.findOne({videoId: videoId})
+        const foundVideo: VideoDBType | null = await videoCollection.findOne({id: videoId})
         if (foundVideo) {
             return foundVideo
         }
@@ -37,7 +37,7 @@ export const videosDBRepository = {
     },
 
     async updateVideo(videoId: string, title: string, author: string): Promise<boolean> {
-        const result = await videoCollection.updateOne({videoId: videoId}, {
+        const result = await videoCollection.updateOne({id: videoId}, {
             $set: {
                 title,
                 author
@@ -47,7 +47,7 @@ export const videosDBRepository = {
     },
 
     async deleteVideo(videoId: string): Promise<boolean> {
-        const result = await videoCollection.deleteOne({videoId})
+        const result = await videoCollection.deleteOne({id: videoId})
         return result.deletedCount === 1
     }
 

@@ -1,37 +1,51 @@
 import {Response, Request} from 'express'
 import {SETTINGS} from "../settings";
-import {blogsRepository} from "../repositories/blogs-repository";
+import {BlogDBType} from "../input-output-types/blog-types";
+import {blogsMongoRepository} from "../repositories/blogs-mongo-repository";
+import {ObjectId} from "mongodb";
 
 
-export const getBlogsController = (req: Request, res: Response) => {
-    const foundBlogs = blogsRepository.findBlogs(req.query.name?.toString())
-    res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundBlogs) // отдаём видео в качестве ответа
+export const getBlogsController = async (req: Request, res: Response) => {
+    const foundBlogs: BlogDBType[] = await blogsMongoRepository.findBlogs(req.query.name?.toString())
+    return res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundBlogs) // отдаём видео в качестве ответа
 }
 
-export const postBlogController = (req: Request, res: Response) => {
-    const newBlog = blogsRepository.createBlog(req.body)
-    res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(newBlog);
-};
-
-export const findBlogController = (req: Request, res: Response) => {
-    const foundBlog = blogsRepository.findBlogById(req.params.blogId)
-    if (!foundBlog) res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
-    res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundBlog)
+export const postBlogController = async (req: Request, res: Response) => {
+    const newBlog: BlogDBType = await blogsMongoRepository.createBlog(req.body)
+    return res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(newBlog);
 }
 
-export const updateBlogController = (req: Request, res: Response) => {
-    const isUpdated = blogsRepository.updateBlog(req.params.blogId, req.body)
+export const findBlogController = async (req: Request, res: Response) => {
+    const blogId = req.params.blogId;
+    if (!ObjectId.isValid(blogId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+    }
+    const foundBlog: BlogDBType | null = await blogsMongoRepository.findBlogById(blogId)
+    if (!foundBlog) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    return res.status(SETTINGS.HTTP_STATUSES.OK_200).send(foundBlog)
+}
+
+export const updateBlogController = async (req: Request, res: Response) => {
+    const blogId = req.params.blogId;
+    if (!ObjectId.isValid(blogId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+    }
+    const isUpdated: boolean = await blogsMongoRepository.updateBlog(blogId, req.body)
     if (isUpdated) {
-        const blog = blogsRepository.findBlogById(req.params.blogId)
-        res.status(SETTINGS.HTTP_STATUSES.NO_CONTENT_204).send(blog)
+        const blog: BlogDBType | null = await blogsMongoRepository.findBlogById(blogId)
+        return res.status(SETTINGS.HTTP_STATUSES.NO_CONTENT_204).send(blog)
     }
-    res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
 }
 
-export const deleteBlogController = (req: Request, res: Response) => {
-    const isDeleted = blogsRepository.deleteBlog(req.params.blogId)
-    if (isDeleted) {
-        res.sendStatus(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
+export const deleteBlogController = async (req: Request, res: Response) => {
+    const blogId = req.params.blogId;
+    if (!ObjectId.isValid(blogId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
     }
-    res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    const isDeleted: boolean = await blogsMongoRepository.deleteBlog(blogId)
+    if (isDeleted) {
+        return res.sendStatus(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
+    }
+    return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
 }

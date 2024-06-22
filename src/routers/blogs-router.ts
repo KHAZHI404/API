@@ -16,17 +16,10 @@ export const blogsRouter = Router({})
 
 blogsRouter.get('/', getBlogsController);
 
-blogsRouter.post('/',
-    authMiddleware,
-    blogValidation,
-    errorsValidationMiddleware, postBlogController);
+blogsRouter.post('/', authMiddleware, blogValidation, errorsValidationMiddleware, postBlogController);
 
 blogsRouter.get('/:blogId', findBlogController);
 
-blogsRouter.put('/:blogId',
-    authMiddleware,
-    blogValidation,
-    errorsValidationMiddleware, updateBlogController);
+blogsRouter.put('/:blogId', authMiddleware, blogValidation, errorsValidationMiddleware, updateBlogController);
 
-blogsRouter.delete('/:blogId',
-    authMiddleware, deleteBlogController);
+blogsRouter.delete('/:blogId', authMiddleware, deleteBlogController);

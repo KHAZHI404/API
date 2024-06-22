@@ -3,6 +3,7 @@
 import {Resolutions, VideoDBType} from "../input-output-types/video-types";
 import {BlogDBType} from "../input-output-types/blog-types";
 import {PostDBType} from "../input-output-types/post-types";
+import {ObjectId} from "mongodb";
 
 export type DBType = { // типизация базы данных (что мы будем в ней хранить)
     videos:  VideoDBType[]
@@ -36,34 +37,36 @@ export const db: DBType = { // создаём базу данных (пока э
         ],
     blogs: [
         {
-            "id": "1",
             "name": 'blog name 1',
             "description": 'blog description 1',
             "websiteUrl": 'blog websiteUrl 1',
+            "createdAt": "2024-06-11T14:36:52.380Z",
+            isMembership: false
         },
         {
-            "id": "2",
             "name": 'blog name 2',
             "description": 'blog description 2',
             "websiteUrl": 'blog websiteUrl 2',
+            "createdAt": "2024-06-11T14:36:52.380Z",
+            isMembership: false
         }
     ],
     posts: [
         {
-            "id": "1",
             "title": "string 1",
             "shortDescription": "string 1",
             "content": "string 1",
             "blogId": "1",
-            "blogName": "string 1"
+            "blogName": "string 1",
+            "createdAt": "2024-06-11T14:36:52.380Z",
         },
         {
-            "id": "2",
             "title": "string 2",
             "shortDescription": "string 2",
             "content": "string 2",
             "blogId": "1",
-            "blogName": "string 2"
+            "blogName": "string 2",
+            "createdAt": "2024-06-11T14:36:52.380Z",
         }
     ]
     // some: []

@@ -3,13 +3,30 @@ import {setDB} from '../src/db/db'
 import {SETTINGS} from '../src/settings'
 import {InputVideoType, VideoDBType} from "../src/input-output-types/video-types";
 import {videosTestManager} from "./videosTestManager";
+// база данных для тестов
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import {MongoClient} from "mongodb";
 
 
-describe('/videos', () => {
+describe('/videos', async () => {
+
+    // запуск виртуального сервера с временной бд
+    const server = await MongoMemoryServer.create()
 
     beforeAll(async () => { // очистка базы данных перед началом тестирования
         setDB()
+
+        const uri = server.getUri()
+        const client: MongoClient = new MongoClient(uri)
+        await client.connect()
     })
+
+    afterAll(done => {
+        done()
+    })
+    // остановка виртуально сервера с бд после выполнения тестов
+    await server.stop()
+})
 
     it('should return 200 and get empty array', async () => {
 
@@ -123,10 +140,3 @@ describe('/videos', () => {
             .get(SETTINGS.PATH.VIDEOS)
             .expect(SETTINGS.HTTP_STATUSES.OK_200, [createdVideo2])
     })
-
-
-
-afterAll(done => {
-    done()
-    })
-})
