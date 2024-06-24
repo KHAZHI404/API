@@ -1,42 +1,19 @@
 // простая база данных:
 
-import {Resolutions, VideoDBType} from "../input-output-types/video-types";
-import {BlogDBType} from "../input-output-types/blog-types";
+import {BlogDBModel} from "../input-output-types/blog-types";
 import {PostDBType} from "../input-output-types/post-types";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 
 export type DBType = { // типизация базы данных (что мы будем в ней хранить)
-    videos:  VideoDBType[]
-    blogs:  BlogDBType[]
+    blogs:  BlogDBModel[]
     posts: PostDBType[]
     // some: any[]
 }
 
-export const db: DBType = { // создаём базу данных (пока это просто переменная)
-    videos: [
-        {
-        "id": '1',
-        "title": "string1",
-        "author": "string1",
-        "canBeDownloaded": true,
-        "minAgeRestriction": null,
-        "createdAt": "2024-06-11T14:36:52.380Z",
-        "publicationDate": "2024-06-11T14:36:52.380Z",
-        "availableResolution": [Resolutions.P144]
-    },
-        {
-            "id": '2',
-            "title": "string2",
-            "author": "string2",
-            "canBeDownloaded": true,
-            "minAgeRestriction": null,
-            "createdAt": "2024-06-11T14:36:52.380Z",
-            "publicationDate": "2024-06-11T14:36:52.380Z",
-            "availableResolution": [Resolutions.P240]
-        }
-        ],
+export const db = { // создаём базу данных (пока это просто переменная)
     blogs: [
         {
+            "_id": new ObjectId("66780909f49de34500ea57ae"),
             "name": 'blog name 1',
             "description": 'blog description 1',
             "websiteUrl": 'blog websiteUrl 1',
@@ -44,6 +21,7 @@ export const db: DBType = { // создаём базу данных (пока э
             isMembership: false
         },
         {
+            "_id": new ObjectId("667809780ab6a3eb44fa0bb9"),
             "name": 'blog name 2',
             "description": 'blog description 2',
             "websiteUrl": 'blog websiteUrl 2',
@@ -73,16 +51,15 @@ export const db: DBType = { // создаём базу данных (пока э
 }
 
 // функция для быстрой очистки/заполнения базы данных для тестов
-export const setDB = (dataset?: Partial<DBType>) => {
+export const setDB = (dataset?: any) => {
     if (!dataset) { // если в функцию ничего не передано - то очищаем базу данных
-        db.videos = []
-        db.blogs = []
-        db.posts = []
+        db.blogs.length = 0
+        db.posts.length = 0
         // db.some = []
         return
     }
 
     // если что-то передано - то заменяем старые значения новыми
-    db.videos = dataset.videos || db.videos
+    // db.videos = dataset.videos || db.videos
     // db.some = dataset.some || db.some
 }

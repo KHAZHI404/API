@@ -1,10 +1,10 @@
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
-import {BlogDBType} from "../src/input-output-types/blog-types";
 import {ObjectId, WithId} from "mongodb";
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import {MongoClient} from "mongodb";
 import {blogCollection} from "../src/db/mongodb";
+import {BlogDBModel} from "../src/input-output-types/blog-types";
 
 
 describe('/blogs', () => {
@@ -62,7 +62,7 @@ describe('/blogs', () => {
     })
 
 
-    let createdBlog1: WithId<BlogDBType>;
+    let createdBlog1: BlogDBModel;
     it("should create blog with correct input data", async () => {
         const data = {
             name: 'BLOG NAME',
@@ -142,7 +142,7 @@ describe('/blogs', () => {
             }])
     })
 
-    let createdBlog2: WithId<BlogDBType>;
+    let createdBlog2: BlogDBModel;
     it("should create second blog with correct input data", async () => {
         const data = {
             name: 'BLOG NAME 2',

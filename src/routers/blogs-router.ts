@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {
     deleteBlogController,
-    findBlogController,
+    findBlogController, foundPostsForBlogController,
     getBlogsController,
     postBlogController,
     updateBlogController
@@ -17,6 +17,8 @@ export const blogsRouter = Router({})
 blogsRouter.get('/', getBlogsController);
 
 blogsRouter.post('/', authMiddleware, blogValidation, errorsValidationMiddleware, postBlogController);
+
+blogsRouter.post('/:blogId/posts', blogValidation, errorsValidationMiddleware, foundPostsForBlogController);
 
 blogsRouter.get('/:blogId', findBlogController);
 
