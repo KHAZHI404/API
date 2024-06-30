@@ -3,7 +3,6 @@ import {SETTINGS} from "../settings";
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers['authorization'] as string
-    console.log(auth)
 
     if (!auth || auth.slice(0, 6) !== 'Basic ') {
         res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401)

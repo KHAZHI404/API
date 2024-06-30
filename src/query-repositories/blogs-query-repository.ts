@@ -1,6 +1,14 @@
 import {blogCollection} from "../db/mongodb";
 import {ObjectId} from "mongodb";
-import {BlogDBModel, blogMapper, BlogViewModel, Paginator} from "../input-output-types/blog-types";
+import {BlogDBModel, blogMapper, BlogViewModel} from "../input-output-types/blog-types";
+import {
+    calculatePagesCount,
+    createPagination,
+    createSearchNameFilter,
+    createSortOptions
+} from "../input-output-types/pagination-sorting";
+
+
 
 export const blogsQueryRepository = {
 
@@ -8,26 +16,17 @@ export const blogsQueryRepository = {
                     pageSize: number,
                     sortBy: string,
                     sortDirection: string,
-                    searchNameTerm: string | null): Paginator<BlogViewModel[]> {
+                    searchNameTerm: string | null) {
+        const searchNameFilter = createSearchNameFilter(searchNameTerm);
+        const sortOptions = createSortOptions(sortBy, sortDirection);
+        const totalCount = await blogCollection.countDocuments(searchNameFilter);
+        const pagesCount = calculatePagesCount(totalCount, pageSize);
+        const skip = createPagination(page, pageSize);
 
-        let searchNameFilter = {}
-        if (searchNameTerm) {
-            searchNameFilter = {name: {$regex: searchNameTerm, $options: 'i'}}
-        }
-        let sortOptions: { [key: string]: 1 | -1}  = {
-            [sortBy]: -1
-        }
-        if (sortDirection === "asc") {
-            sortOptions[sortBy] = 1
-        }
-        const totalCount = await blogCollection.countDocuments(searchNameFilter)
-        const pagesCount = Math.ceil(totalCount / +pageSize)
-        const scip = (+page - 1) * +pageSize
-
-        const blogs = await blogCollection
+        const blogs: BlogDBModel[] = await blogCollection
             .find(searchNameFilter)
             .sort(sortOptions)
-            .skip(scip)
+            .skip(skip)
             .limit(+pageSize)
             .toArray()
 
@@ -40,71 +39,14 @@ export const blogsQueryRepository = {
         }
     },
 
+    async findBlogById(blogId: string): Promise<BlogViewModel | null>  {
+        const blogInDB: BlogDBModel | null = await blogCollection.findOne({_id: new ObjectId(blogId)})
 
-
-    async findBlogById(blogId: string): Promise<BlogViewModel | null> {
-        const blog: BlogDBModel | null = await blogCollection.findOne({_id: new ObjectId(blogId)})
-
-        // return (blogMapper(blog))
-        // if (blog) {
-        //     return {
-        //         id: blogId,
-        //         name: blog.name,
-        //         description: blog.description,
-        //         websiteUrl: blog.websiteUrl,
-        //         createdAt: blog.createdAt,
-        //         isMembership: blog.isMembership
-        //     };
-        // } else {
-        //     return null
-        // }
+        if (blogInDB) {
+            return blogMapper(blogInDB)
+        }
+        return null
 
     },
 
 }
-
-
-// // Формирует фильтр для запроса в базу данных
-// function createFilter(blogId: any, searchNameTerm: any) {
-//     const byId = blogId ? { blogId: new ObjectId(blogId) } : {};
-//     const search = searchNameTerm ? { title: { $regex: searchNameTerm, $options: 'i' } } : {};
-//     return { ...byId, ...search };
-// }
-//
-// // Функция для выполнения запроса в базу данных
-// async function fetchPosts(postCollection: any, filter: any, query: any) {
-//     try {
-//         const items = await postCollection
-//             .find(filter)
-//             .sort(query.sortBy, query.sortDirection)
-//             .skip((query.pageNumber - 1) * query.pageSize)
-//             .limit(query.pageSize)
-//             .toArray();
-//
-//         return items;
-//     } catch (error) {
-//         console.error("Error fetching posts:", error);
-//         throw error;
-//     }
-// }
-//
-// // Функция для подсчета документов
-// async function countPosts(postCollection: any, filter: any) {
-//     try {
-//         const totalCount = await postCollection.countDocuments(filter);
-//         return totalCount;
-//     } catch (error) {
-//         console.error("Error counting posts:", error);
-//         throw error;
-//     }
-// }
-// // Функция для форматирования ответа
-// function formatResponse(items: any, totalCount: any, query: any) {
-//     return {
-//         pagesCount: Math.ceil(totalCount / query.pageSize),
-//         page: query.pageNumber,
-//         pageSize: query.pageSize,
-//         totalCount,
-//         items: items.map(blogMapper(items))
-//     };
-// }

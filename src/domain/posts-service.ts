@@ -1,18 +1,25 @@
-import {CreatePostType, PostDBType} from "../input-output-types/post-types";
+import {CreatePostType, PostDBModel} from "../input-output-types/post-types";
 import {postsDbRepository} from "../repositories/posts-db-repository";
+import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 
 
 export const postsService = {
 
-    async createPost(inputData: CreatePostType, blogName: string) {
-        const newPost: PostDBType = {
-            ...inputData,
-            blogName,
+    async createPost(inputData: CreatePostType) {
+        const blog = await blogsQueryRepository.findBlogById(inputData.blogId)
+        if (!blog) return null
+
+        const newPost = {
+            title: inputData.title,
+            shortDescription: inputData.shortDescription,
+            content: inputData.content,
+            blogId: inputData.blogId,
+            blogName: blog.name,
             createdAt: new Date().toISOString()
+
         }
 
-        await postsDbRepository.createPost(newPost)
-        return newPost
+        return await postsDbRepository.createPost(newPost)
     },
 
     async updatePost(postId: string, input: CreatePostType) {

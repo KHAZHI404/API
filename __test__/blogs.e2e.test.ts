@@ -30,9 +30,12 @@ describe('/blogs', () => {
 
         const res = await req
             .get(SETTINGS.PATH.BLOGS)
-            .expect(SETTINGS.HTTP_STATUSES.OK_200, []) // проверяем наличие эндпоинта
+            .expect(SETTINGS.HTTP_STATUSES.OK_200,
+                { pagesCount: 0, page: 1,
+                    pageSize: 10, totalCount: 0,
+                    items: [] }
+            ) // проверяем наличие эндпоинта
 
-        expect(res.body.length).toBe(0) // проверяем ответ эндпоинта
     })
 
     it('should return 404 for not existing blog', async () => {

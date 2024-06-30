@@ -1,12 +1,12 @@
-import {CreatePostType, PostDBType} from "../input-output-types/post-types";
+import {CreatePostType, PostDBModel} from "../input-output-types/post-types";
 import {postCollection} from "../db/mongodb";
 import {ObjectId} from "mongodb";
 
 
 export const postsDbRepository = {
 
-    async createPost(newPost: PostDBType) {
-         await postCollection.insertOne(newPost)
+    async createPost(newPost: any) {
+        await postCollection.insertOne(newPost)
         return newPost
     },
 

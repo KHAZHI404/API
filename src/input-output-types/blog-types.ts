@@ -15,6 +15,14 @@ export type BlogInputModel = {
     websiteUrl: string
 }
 
+export type BlogQueryModel = {
+    pageNumber: string
+    pageSize: string
+    sortBy: string
+    sortDirection: string
+    searchNameTerm: string
+}
+
 export type BlogViewModel = {
     id: string
     name: string
@@ -24,12 +32,12 @@ export type BlogViewModel = {
     isMembership: boolean
 }
 
-export type Paginator<OutputBlogsType> = {
+export type Paginator<BlogViewModel> = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items:	OutputBlogsType[]
+    items:	BlogViewModel[]
 }
 
 export const blogMapper = (blog: BlogDBModel): BlogViewModel => {

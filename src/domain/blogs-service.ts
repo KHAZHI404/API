@@ -1,10 +1,10 @@
 import {blogsDbRepository} from "../repositories/blogs-db-repository";
-import {BlogInputModel} from "../input-output-types/blog-types";
+import {BlogDBModel, BlogInputModel} from "../input-output-types/blog-types";
 
 
 export const blogsService = {
 
-    async createBlog(inputData: BlogInputModel) {
+    async createBlog(inputData: BlogInputModel): Promise<BlogDBModel> {
         const newBlog = {
             ...inputData,
             createdAt: new Date().toISOString(),

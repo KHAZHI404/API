@@ -5,9 +5,9 @@ import {validationResult} from "express-validator";
 import {MongoClient, ObjectId, WithId} from "mongodb";
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import {blogCollection, postCollection} from "../src/db/mongodb";
-import {BlogDBType} from "../src/input-output-types/blog-types";
-import {setDB} from "../src/db/db";
-import {dataset1} from "./datasets";
+import {BlogDBModel} from "../src/input-output-types/blog-types";
+
+;
 
 
 describe('/posts', () => {
@@ -76,7 +76,7 @@ describe('/posts', () => {
     describe('Post Tests', () => {
         it("should create post with correct input data", async () => {
             // Создаем блог в БД и получаем его _id
-            const blogData: WithId<BlogDBType> = {
+            const blogData: BlogDBModel = {
                 _id: new ObjectId(),
                 name: 'Test Blog',
                 description: 'Test Blog Description',

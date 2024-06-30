@@ -1,12 +1,12 @@
 // простая база данных:
 
 import {BlogDBModel} from "../input-output-types/blog-types";
-import {PostDBType} from "../input-output-types/post-types";
+import {PostDBModel} from "../input-output-types/post-types";
 import {ObjectId, WithId} from "mongodb";
 
 export type DBType = { // типизация базы данных (что мы будем в ней хранить)
     blogs:  BlogDBModel[]
-    posts: PostDBType[]
+    posts: PostDBModel[]
     // some: any[]
 }
 
