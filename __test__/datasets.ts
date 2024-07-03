@@ -1,4 +1,4 @@
-import {BlogDBModel} from "../src/input-output-types/blog-types";
+import {BlogDBModel} from "../src/types/blog-types";
 import {ObjectId} from "mongodb";
 
 // готовые данные для переиспользования в тестах

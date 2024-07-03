@@ -4,11 +4,11 @@ import {ObjectId} from "mongodb";
 import {postsService} from "../domain/posts-service";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 import {postsQueryRepository} from "../query-repositories/posts-query-repository";
-import {Paginator, PostDBModel, PostViewModel} from "../input-output-types/post-types";
-import {CommonQueryModel, getPageOptions} from "../input-output-types/pagination-sorting";
+import {Paginator, PostViewModel} from "../types/post-types";
+import {CommonQueryModel, getPageOptions} from "../types/pagination-sorting";
 
 
-export const getPostsController = async (req: Request<{},{},{},CommonQueryModel>, res: Response) => {
+export const getPostsController = async (req: Request<{}, {}, {}, CommonQueryModel>, res: Response) => {
     const {pageNumber, pageSize, sortBy, sortDirection} = getPageOptions(req.query);
 
     const foundPosts: Paginator<PostViewModel> = await postsQueryRepository.findPosts(pageNumber, pageSize,
@@ -18,15 +18,20 @@ export const getPostsController = async (req: Request<{},{},{},CommonQueryModel>
 }
 
 export const postPostController = async (req: Request, res: Response) => {
-    const postInDB = await postsService.createPost(req.body)
-    const post: PostViewModel | null = await postsQueryRepository.findPostById(postInDB._id)
+    if (!ObjectId.isValid(req.body.blogId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid blogId");
+    }
+
+    const postId = await postsService.createPost(req.body)
+    if (!postId) return res.sendStatus(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400)
+    const post: PostViewModel | null = await postsQueryRepository.findPostById(postId.toString())
     return res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(post);
 }
 
 export const findPostController = async (req: Request, res: Response) => {
     const postId = req.params.postId;
     if (!ObjectId.isValid(postId)) {
-        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid postId");
     }
 
     const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(postId)
@@ -42,7 +47,7 @@ export const updatePostController = async (req: Request, res: Response) => {
 
     const postId = req.params.postId;
     if (!ObjectId.isValid(postId)) {
-        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid postId");
     }
 
     const isUpdated: boolean = await postsService.updatePost(postId, req.body)
@@ -56,7 +61,7 @@ export const updatePostController = async (req: Request, res: Response) => {
 export const deletePostController = async (req: Request, res: Response) => {
     const postId = req.params.postId;
     if (!ObjectId.isValid(postId)) {
-        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid postId");
     }
 
     const isDeleted: boolean = await postsService.deletePost(postId)

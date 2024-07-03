@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {validationResult} from "express-validator";
 import {SETTINGS} from "../settings";
-import {OutputErrorsType} from "../input-output-types/output-errors-type";
+import {OutputErrorsType} from "../types/output-errors-type";
 
 export const errorsValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req).array();

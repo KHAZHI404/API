@@ -1,7 +1,7 @@
 // простая база данных:
 
-import {BlogDBModel} from "../input-output-types/blog-types";
-import {PostDBModel} from "../input-output-types/post-types";
+import {BlogDBModel} from "../types/blog-types";
+import {PostDBModel} from "../types/post-types";
 import {ObjectId, WithId} from "mongodb";
 
 export type DBType = { // типизация базы данных (что мы будем в ней хранить)

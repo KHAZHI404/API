@@ -1,16 +1,18 @@
 import {Request, Response} from "express";
-import {CommonQueryModel, getPageOptions} from "../input-output-types/pagination-sorting";
-import {Paginator} from "../input-output-types/blog-types";
+import {CommonQueryModel, getPageOptions} from "../types/pagination-sorting";
+import {Paginator} from "../types/blog-types";
 import {SETTINGS} from "../settings";
 import {usersQueryRepository} from "../query-repositories/users-query-repository";
-import {UserViewModel} from "../input-output-types/user-types";
+import {UserViewModel} from "../types/user-types";
 import {usersService} from "../domain/users-service";
 import {ObjectId} from "mongodb";
 
 
-export const getUsersController = async (req: Request<{},{},{},CommonQueryModel>, res: Response) => {
-    const {pageNumber, pageSize, sortBy, sortDirection,
-        searchLoginTerm, searchEmailTerm} = getPageOptions(req.query);
+export const getUsersController = async (req: Request<{}, {}, {}, CommonQueryModel>, res: Response) => {
+    const {
+        pageNumber, pageSize, sortBy, sortDirection,
+        searchLoginTerm, searchEmailTerm
+    } = getPageOptions(req.query);
 
     const foundUsers: Paginator<UserViewModel> = await usersQueryRepository.findUsers(
         pageNumber, pageSize, sortBy, sortDirection, searchLoginTerm, searchEmailTerm)
@@ -19,11 +21,21 @@ export const getUsersController = async (req: Request<{},{},{},CommonQueryModel>
 }
 
 export const postUserController = async (req: Request, res: Response) => {
-    const userInDB = await usersService.createUser(req.body)
-    // const user = await usersQueryRepository.findByLoginOrEmail(userInDB)
+    const result = await usersService.createUser(req.body);
 
-    res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(userInDB);
+    if (!result.isSuccessful) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send(result.errorsMessages);
+    }
+
+    const user: UserViewModel | null = await usersQueryRepository.findUserById(result.userId!.toString());
+
+    if (!user) {
+        return res.status(SETTINGS.HTTP_STATUSES.NOT_FOUND_404).send({message: "User not found"});
+    }
+
+    return res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(user);
 }
+
 
 export const deleteUserController = async (req: Request, res: Response) => {
     const userId = req.params.userId

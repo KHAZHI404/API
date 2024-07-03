@@ -1,11 +1,11 @@
 import {req} from "./test-helpers";
 import {SETTINGS} from "../src/settings";
-import {CreatePostType, PostDBType} from "../src/input-output-types/post-types";
+import {CreatePostType, PostDBModel} from "../src/types/post-types";
 import {validationResult} from "express-validator";
 import {MongoClient, ObjectId, WithId} from "mongodb";
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import {blogCollection, postCollection} from "../src/db/mongodb";
-import {BlogDBModel} from "../src/input-output-types/blog-types";
+import {BlogDBModel} from "../src/types/blog-types";
 
 ;
 
@@ -33,9 +33,10 @@ describe('/posts', () => {
 
         const res = await req
             .get(SETTINGS.PATH.POSTS)
-            .expect(SETTINGS.HTTP_STATUSES.OK_200, []) // проверяем наличие эндпоинта
+            .expect(SETTINGS.HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1,
+                pageSize: 10, totalCount: 0,
+                items: [] })
 
-        expect(res.body.length).toBe(0) // проверяем ответ эндпоинта
     })
 
     it('should return 404 for not existing post', async () => {
@@ -67,11 +68,10 @@ describe('/posts', () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty())
-        expect(res.body.length).toBe(0)
     })
 
 
-    let createdPost1: WithId<PostDBType>;
+    let createdPost1: WithId<PostDBModel>;
 
     describe('Post Tests', () => {
         it("should create post with correct input data", async () => {
@@ -113,7 +113,7 @@ describe('/posts', () => {
 
             // Проверяем, что созданный пост соответствует ожидаемым данным
             expect(createdPost1).toEqual({
-                _id: expect.any(String),
+                id: expect.any(String),
                 title: data.title,
                 shortDescription: data.shortDescription,
                 content: data.content,
@@ -125,7 +125,9 @@ describe('/posts', () => {
             // Проверяем, что пост был успешно добавлен в БД
             await req
                 .get(SETTINGS.PATH.POSTS)
-                .expect(SETTINGS.HTTP_STATUSES.OK_200, [createdPost1]);
+                .expect(SETTINGS.HTTP_STATUSES.OK_200, SETTINGS.HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1,
+                    pageSize: 10, totalCount: 0,
+                    items: [createdPost1] });
         });
 
 
@@ -193,7 +195,7 @@ describe('/posts', () => {
                 }])
         })
 
-        let createdPost2: WithId<PostDBType>;
+        let createdPost2: WithId<PostDBModel>;
         it("should create second post with correct input data", async () => {
             const data = {
                 title: 'created title 2',

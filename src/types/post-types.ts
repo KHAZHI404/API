@@ -1,5 +1,4 @@
 import {ObjectId} from "mongodb";
-import {BlogViewModel} from "./blog-types";
 
 export type PostDBModel = {
     _id: ObjectId
@@ -10,6 +9,7 @@ export type PostDBModel = {
     blogName: string
     createdAt: string
 }
+
 export type PostViewModel = {
     id: string
     title: string
@@ -20,7 +20,7 @@ export type PostViewModel = {
     createdAt: string
 }
 
-export type CreatePostType = {
+export type PostInputModel = {
     "title": string
     "shortDescription": string
     "content": string

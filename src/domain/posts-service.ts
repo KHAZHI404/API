@@ -1,15 +1,18 @@
-import {CreatePostType, PostDBModel} from "../input-output-types/post-types";
+import {PostDBModel, PostInputModel} from "../types/post-types";
 import {postsDbRepository} from "../repositories/posts-db-repository";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
+import {BlogViewModel} from "../types/blog-types";
+import {ObjectId} from "mongodb";
 
 
 export const postsService = {
 
-    async createPost(inputData: CreatePostType) {
-        const blog = await blogsQueryRepository.findBlogById(inputData.blogId)
+    async createPost(inputData: PostInputModel) {
+        const blog: BlogViewModel | null = await blogsQueryRepository.findBlogById(inputData.blogId)
         if (!blog) return null
 
-        const newPost = {
+        const newPost: PostDBModel = {
+            _id: new ObjectId(),
             title: inputData.title,
             shortDescription: inputData.shortDescription,
             content: inputData.content,
@@ -19,10 +22,11 @@ export const postsService = {
 
         }
 
-        return await postsDbRepository.createPost(newPost)
+        const post = await postsDbRepository.createPost(newPost)
+        return post.insertedId
     },
 
-    async updatePost(postId: string, input: CreatePostType) {
+    async updatePost(postId: string, input: PostInputModel) {
         return await postsDbRepository.updatePost(postId, input)
     },
 

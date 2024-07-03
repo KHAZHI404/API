@@ -15,14 +15,6 @@ export type BlogInputModel = {
     websiteUrl: string
 }
 
-export type BlogQueryModel = {
-    pageNumber: string
-    pageSize: string
-    sortBy: string
-    sortDirection: string
-    searchNameTerm: string
-}
-
 export type BlogViewModel = {
     id: string
     name: string

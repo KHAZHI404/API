@@ -1,14 +1,13 @@
-import {ObjectId} from "mongodb";
+import {InsertOneResult, ObjectId} from "mongodb";
 import {userCollection} from "../db/mongodb";
-import {userMapper, UserViewModel} from "../input-output-types/user-types";
+import {UserDBModel} from "../types/user-types";
 
 
 export const usersDbRepository = {
 
-    async createUser(newUser: any) {
+    async createUser(newUser: UserDBModel) {
         return await userCollection.insertOne(newUser)
     },
-
 
     async deleteUser(userId: string) {
         const result = await userCollection.deleteOne({_id: new ObjectId(userId)})

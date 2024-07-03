@@ -8,7 +8,7 @@ import {
     updatePostController
 } from "../controllers/posts-controller"
 import {postValidation} from "../middlewares/postsInputValidation";
-import {authMiddleware} from "../middlewares/authMiddleware";
+import {basicAuth} from "../middlewares/authMiddleware";
 
 
 export const postsRouter = Router({})
@@ -16,10 +16,10 @@ export const postsRouter = Router({})
 
 postsRouter.get('/', getPostsController);
 
-postsRouter.post('/', authMiddleware, postValidation, errorsValidationMiddleware, postPostController);
+postsRouter.post('/', basicAuth, postValidation, errorsValidationMiddleware, postPostController);
 
 postsRouter.get('/:postId', findPostController);
 
-postsRouter.put('/:postId', authMiddleware, postValidation, errorsValidationMiddleware, updatePostController);
+postsRouter.put('/:postId', basicAuth, postValidation, errorsValidationMiddleware, updatePostController);
 
-postsRouter.delete('/:postId', authMiddleware, deletePostController);
+postsRouter.delete('/:postId', basicAuth, deletePostController);

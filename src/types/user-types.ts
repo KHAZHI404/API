@@ -1,6 +1,5 @@
 import {ObjectId} from "mongodb";
 
-
 export type UserDBModel = {
     _id: ObjectId
     userName: string

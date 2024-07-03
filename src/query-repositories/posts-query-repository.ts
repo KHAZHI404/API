@@ -1,11 +1,11 @@
-import {Paginator, PostDBModel, postMapper, PostViewModel} from "../input-output-types/post-types";
+import {Paginator, PostDBModel, postMapper, PostViewModel} from "../types/post-types";
 import {postCollection} from "../db/mongodb";
 import {ObjectId} from "mongodb";
 import {
     calculatePagesCount,
-    createPagination, createSearchNameFilter,
+    createPagination,
     createSortOptions
-} from "../input-output-types/pagination-sorting";
+} from "../types/pagination-sorting";
 
 
 export const postsQueryRepository = {

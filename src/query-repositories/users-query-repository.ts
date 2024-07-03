@@ -1,9 +1,10 @@
 import {
     calculatePagesCount,
     createPagination,
+    createSearchFilter,
     createSortOptions
-} from "../input-output-types/pagination-sorting";
-import {UserDBModel, userMapper, UserViewModel} from "../input-output-types/user-types";
+} from "../types/pagination-sorting";
+import {UserDBModel, userMapper, UserViewModel} from "../types/user-types";
 import {userCollection} from "../db/mongodb";
 import {ObjectId} from "mongodb";
 
@@ -16,19 +17,24 @@ export const usersQueryRepository = {
                     sortDirection: string,
                     searchLoginTerm: string | null,
                     searchEmailTerm: string | null) {
-        const filter: any = {$or: []}
-        if (searchLoginTerm) {
-            filter["$or"].push({login: {$regex: searchLoginTerm, $options: 'i'}})
+        const filter: any = { $or: [] };
+
+        // Используем универсальную функцию для создания фильтров
+        const loginFilter = createSearchFilter(searchLoginTerm, 'userName');
+        const emailFilter = createSearchFilter(searchEmailTerm, 'email');
+
+        if (Object.keys(loginFilter).length > 0) {
+            filter.$or.push(loginFilter);
         }
-        if (searchEmailTerm) {
-            filter["$or"].push({email: {$regex: searchEmailTerm, $options: 'i'}})
-        }
-        if (filter["$or"].length === 0) {
-            filter["$or"].push({})
+        if (Object.keys(emailFilter).length > 0) {
+            filter.$or.push(emailFilter);
         }
 
-        // const searchLoginTerm = createSearchNameFilter(searchLoginTerm);
-        // const searchEmailTerm = createSearchNameFilter(searchLoginTerm);
+        // Если нет условий поиска, добавляем пустой объект для избежания ошибки
+        if (filter.$or.length === 0) {
+            filter.$or.push({});
+        }
+
         const sortOptions = createSortOptions(sortBy, sortDirection);
         const totalCount = await userCollection.countDocuments(filter);
         const pagesCount = calculatePagesCount(totalCount, pageSize);
@@ -50,13 +56,12 @@ export const usersQueryRepository = {
         }
     },
 
-    async findByLoginOrEmail(userId: string) {
-        const user = await userCollection.findOne({_id: new ObjectId(userId)} )
-        return user
+    async findByLoginOrEmail(loginOrEmail: string) {
+        return await userCollection.findOne({ $or: [ { "userName": loginOrEmail }, { "email": loginOrEmail } ] } )
     },
 
-    async findUserById(loginOrEmail: string) {
-        const user = await userCollection.findOne({ $or: [ { login: loginOrEmail }, { email: loginOrEmail } ] } )
+    async findUserById(userId: string): Promise<UserViewModel | null> {
+        const user = await userCollection.findOne({_id: new ObjectId(userId)})
         if (user) {
             return userMapper(user)
         }

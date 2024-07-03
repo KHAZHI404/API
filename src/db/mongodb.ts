@@ -1,9 +1,9 @@
 // получение доступа к бд
 import {Collection, Db, MongoClient} from "mongodb";
 import {SETTINGS} from "../settings";
-import {BlogDBModel} from "../input-output-types/blog-types";
-import {PostDBModel} from "../input-output-types/post-types";
-import {UserDBModel} from "../input-output-types/user-types";
+import {BlogDBModel} from "../types/blog-types";
+import {PostDBModel} from "../types/post-types";
+import {UserDBModel} from "../types/user-types";
 
 const client: MongoClient = new MongoClient(SETTINGS.MONGO_URL)
 const db: Db = client.db(SETTINGS.DB_NAME);

@@ -1,16 +1,15 @@
-import {CreatePostType, PostDBModel} from "../input-output-types/post-types";
 import {postCollection} from "../db/mongodb";
 import {ObjectId} from "mongodb";
+import {PostDBModel, PostInputModel} from "../types/post-types";
 
 
 export const postsDbRepository = {
 
-    async createPost(newPost: any) {
-        await postCollection.insertOne(newPost)
-        return newPost
+    async createPost(newPost: PostDBModel) {
+        return await postCollection.insertOne(newPost)
     },
 
-    async updatePost(postId: string, input: CreatePostType) {
+    async updatePost(postId: string, input: PostInputModel) {
         const result = await postCollection.updateOne({_id: new ObjectId(postId)}, {
             $set: {
                 title: input.title,

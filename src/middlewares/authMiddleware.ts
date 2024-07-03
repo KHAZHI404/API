@@ -1,7 +1,11 @@
 import {NextFunction, Request, Response} from "express";
 import {SETTINGS} from "../settings";
+import {jwtService} from "../application/jwt-service";
+import {usersQueryRepository} from "../query-repositories/users-query-repository";
+import {ObjectId} from "mongodb";
+import {UserViewModel} from "../types/user-types";
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers['authorization'] as string
 
     if (!auth || auth.slice(0, 6) !== 'Basic ') {
@@ -22,3 +26,25 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
     next();
 };
+
+export const bearerAuth = async (req: Request, res: Response, next: NextFunction) => {
+    const auth = req.headers['authorization']
+    if (!auth) {
+        return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const token = auth.split(' ')[1];
+
+    const userId = await jwtService.getUserIdByToken(token)
+    if (!userId) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+
+    if(!ObjectId.isValid(userId)) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+
+    const user: UserViewModel | null = await usersQueryRepository.findUserById(userId.toString())
+    if (user) {
+        req.user = user
+        return next()
+    }
+
+    res.send(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401)
+}

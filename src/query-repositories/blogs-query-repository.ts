@@ -1,12 +1,11 @@
 import {blogCollection} from "../db/mongodb";
 import {ObjectId} from "mongodb";
-import {BlogDBModel, blogMapper, BlogViewModel} from "../input-output-types/blog-types";
+import {BlogDBModel, blogMapper, BlogViewModel} from "../types/blog-types";
 import {
     calculatePagesCount,
-    createPagination,
-    createSearchNameFilter,
+    createPagination, createSearchFilter,
     createSortOptions
-} from "../input-output-types/pagination-sorting";
+} from "../types/pagination-sorting";
 
 
 
@@ -17,7 +16,7 @@ export const blogsQueryRepository = {
                     sortBy: string,
                     sortDirection: string,
                     searchNameTerm: string | null) {
-        const searchNameFilter = createSearchNameFilter(searchNameTerm);
+        const searchNameFilter = createSearchFilter(searchNameTerm, 'name');
         const sortOptions = createSortOptions(sortBy, sortDirection);
         const totalCount = await blogCollection.countDocuments(searchNameFilter);
         const pagesCount = calculatePagesCount(totalCount, pageSize);

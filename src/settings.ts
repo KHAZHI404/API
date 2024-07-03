@@ -8,15 +8,16 @@ export const SETTINGS = {
     PORT: process.env.PORT || 3000,
     ADMIN_AUTH: process.env.ADMIN_AUTH || "admin:qwerty",
     MONGO_URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
+    JWT_SECRET: process.env.JWT_SECRET || "123",
     DB_NAME: "social-network",
     BLOG_COLLECTION_NAME: "blogs",
     POST_COLLECTION_NAME: "posts",
     USER_COLLECTION_NAME: "users",
     PATH: {
-        VIDEOS: "/videos",
         BLOGS: "/blogs",
         POSTS: "/posts",
         USERS: "/users",
+        AUTH: "/auth"
     },
     HTTP_STATUSES: {
         OK_200: 200,

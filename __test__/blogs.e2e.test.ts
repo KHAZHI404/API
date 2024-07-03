@@ -4,7 +4,7 @@ import {ObjectId, WithId} from "mongodb";
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import {MongoClient} from "mongodb";
 import {blogCollection} from "../src/db/mongodb";
-import {BlogDBModel} from "../src/input-output-types/blog-types";
+import {BlogDBModel} from "../src/types/blog-types";
 
 
 describe('/blogs', () => {
@@ -18,8 +18,11 @@ describe('/blogs', () => {
         const uri = server.getUri();
         client = new MongoClient(uri);
         await client.connect();
-        await blogCollection.deleteMany({})
     });
+
+    beforeEach(async ()  => {
+        await blogCollection.deleteMany({})
+    })
 
     afterAll(async () => {
         await client.close();
@@ -60,8 +63,6 @@ describe('/blogs', () => {
             .get(SETTINGS.PATH.BLOGS)
             .expect(SETTINGS.HTTP_STATUSES.OK_200)
 
-        console.log(res.body)
-        expect(res.body.length).toBe(0)
     })
 
 
