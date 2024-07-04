@@ -13,10 +13,12 @@ export const SETTINGS = {
     BLOG_COLLECTION_NAME: "blogs",
     POST_COLLECTION_NAME: "posts",
     USER_COLLECTION_NAME: "users",
+    COMMENT_COLLECTION_NAME: "comments",
     PATH: {
         BLOGS: "/blogs",
         POSTS: "/posts",
         USERS: "/users",
+        COMMENTS: "/comments",
         AUTH: "/auth"
     },
     HTTP_STATUSES: {
@@ -26,5 +28,6 @@ export const SETTINGS = {
         BAD_REQUEST_400: 400,
         NOT_FOUND_404: 404,
         NOT_AUTHORIZED_401: 401,
+        FOR_BIDDEN_403: 403,
     }
 }

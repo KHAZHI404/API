@@ -38,7 +38,7 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     const userId = await jwtService.getUserIdByToken(token)
     if (!userId) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
 
-    if(!ObjectId.isValid(userId)) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    if(!ObjectId.isValid(userId)) return res.sendStatus(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid ObjectId format");
 
     const user: UserViewModel | null = await usersQueryRepository.findUserById(userId.toString())
     if (user) {

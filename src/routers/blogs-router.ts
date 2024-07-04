@@ -7,10 +7,10 @@ import {
     postBlogController,
     updateBlogController
 } from "../controllers/blogs-controller";
-import {blogValidation} from "../middlewares/blogInputValidation";
-import {errorsValidationMiddleware} from "../middlewares/errorsValidationMiddleware";
-import {postValidation} from "../middlewares/postsInputValidation";
-import {basicAuth} from "../middlewares/authMiddleware";
+import {blogValidation} from "../validators/blog-input-validation";
+import {errorsValidationMiddleware} from "../middlewares/errors-validation-middleware";
+import {postValidation} from "../validators/post-input-validation";
+import {basicAuth} from "../middlewares/auth-middleware";
 
 
 export const blogsRouter = Router({})

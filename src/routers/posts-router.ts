@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {errorsValidationMiddleware} from "../middlewares/errorsValidationMiddleware"
+import {errorsValidationMiddleware} from "../middlewares/errors-validation-middleware"
 import {
     deletePostController,
     findPostController,
@@ -7,8 +7,8 @@ import {
     postPostController,
     updatePostController
 } from "../controllers/posts-controller"
-import {postValidation} from "../middlewares/postsInputValidation";
-import {basicAuth} from "../middlewares/authMiddleware";
+import {postValidation} from "../validators/post-input-validation";
+import {basicAuth} from "../middlewares/auth-middleware";
 
 
 export const postsRouter = Router({})

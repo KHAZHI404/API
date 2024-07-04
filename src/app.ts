@@ -17,5 +17,6 @@ app.use(cors()) // разрешить любым фронтам делать з�
 app.use(SETTINGS.PATH.BLOGS, blogsRouter)
 app.use(SETTINGS.PATH.POSTS, postsRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
+app.use(SETTINGS.PATH.COMMENTS, usersRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(clearDatabase)
