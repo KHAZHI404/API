@@ -1,8 +1,8 @@
 import {ObjectId} from "mongodb";
-import {BlogDBModel, BlogViewModel} from "./blog-types";
 
 export type CommentDBModel = {
     _id: ObjectId
+    // postId: string
     content: string
     commentatorInfo: CommentatorModel
     createdAt: string
@@ -23,6 +23,14 @@ export type CommentViewModel = {
 export type CommentatorModel = {
     userId: string
     userLogin: string
+}
+
+export type Paginator<CommentViewModel> = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items:	CommentViewModel[]
 }
 
 export const commentMapper = (comment: CommentDBModel): CommentViewModel => {

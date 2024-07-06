@@ -28,7 +28,7 @@ export const usersService = {
 
         const passwordHash = await bcrypt.hash(inputData.password, 10) //хешируем пароль
 
-        const newUser: UserDBModel = {
+        const newUser = {
             _id: new ObjectId(),
             userName: inputData.login,
             email: inputData.email,

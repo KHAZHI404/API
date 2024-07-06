@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 
-export const authValidation = [
+export const loginInputValidation = [
     body('loginOrEmail')
         .isString()
         .trim()
@@ -11,4 +11,11 @@ export const authValidation = [
         .trim()
         .notEmpty()
         .withMessage('errors in password'),
+]
+
+export const confirmValidation = [
+    body('code')
+        .isString()
+        .trim()
+        .notEmpty()
 ]

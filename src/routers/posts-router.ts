@@ -2,8 +2,8 @@ import {Router} from "express"
 import {errorsValidationMiddleware} from "../middlewares/errors-validation-middleware"
 import {
     deletePostController,
-    findPostController,
-    getPostsController,
+    findPostController, getCommentsForPost,
+    getPostsController, postCommentForPost,
     postPostController,
     updatePostController
 } from "../controllers/posts-controller"
@@ -13,6 +13,10 @@ import {basicAuth} from "../middlewares/auth-middleware";
 
 export const postsRouter = Router({})
 
+
+postsRouter.get('/:postId/comments', getCommentsForPost);
+
+postsRouter.post('/:postId/comments', postCommentForPost);
 
 postsRouter.get('/', getPostsController);
 

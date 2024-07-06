@@ -6,7 +6,42 @@ import {blogsQueryRepository} from "../query-repositories/blogs-query-repository
 import {postsQueryRepository} from "../query-repositories/posts-query-repository";
 import {Paginator, PostViewModel} from "../types/post-types";
 import {CommonQueryModel, getPageOptions} from "../types/pagination-sorting";
+import {commentsQueriesRepository} from "../query-repositories/comments-query-repository";
+import {commentsService} from "../domain/comments-service";
 
+export const getCommentsForPost = async (req: Request<{postId: string}, {}, {}, CommonQueryModel>, res: Response) => {
+    const postId = req.params.postId;
+    if (!ObjectId.isValid(postId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid postId");
+    }
+
+    const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(postId)
+    if (!foundPost) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+
+    const {pageNumber, pageSize, sortBy, sortDirection} = getPageOptions(req.query)
+    const comments = await commentsQueriesRepository.findCommentsByPost(postId,
+        pageNumber, pageSize, sortBy, sortDirection)
+    return res.status(SETTINGS.HTTP_STATUSES.OK_200).send(comments)
+}
+
+export const postCommentForPost = async (req: Request, res: Response) => {
+    const postId = req.params.postId;
+    if (!ObjectId.isValid(postId)) {
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send("Invalid postId");
+    }
+
+    const post: PostViewModel | null = await postsQueryRepository.findPostById(postId)
+    if (!post) return res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+    const {id: userId, login: userLogin} = req.user!
+
+    const result = await commentsService.createCommentForPost({userId, userLogin}, postId, req.body.content)
+    if (result.acknowledged) {
+        const comment = await commentsQueriesRepository.findCommentById(result.insertedId.toString());
+
+        return res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(comment);
+    }
+    return res.status(SETTINGS.HTTP_STATUSES.NOT_FOUND_404)
+}
 
 export const getPostsController = async (req: Request<{}, {}, {}, CommonQueryModel>, res: Response) => {
     const {pageNumber, pageSize, sortBy, sortDirection} = getPageOptions(req.query);

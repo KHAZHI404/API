@@ -9,6 +9,7 @@ export const SETTINGS = {
     ADMIN_AUTH: process.env.ADMIN_AUTH || "admin:qwerty",
     MONGO_URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
     JWT_SECRET: process.env.JWT_SECRET || "123",
+    MAIL_RU_PASS: process.env.MAIL_RU_PASS,
     DB_NAME: "social-network",
     BLOG_COLLECTION_NAME: "blogs",
     POST_COLLECTION_NAME: "posts",
@@ -19,7 +20,8 @@ export const SETTINGS = {
         POSTS: "/posts",
         USERS: "/users",
         COMMENTS: "/comments",
-        AUTH: "/auth"
+        AUTH: "/auth",
+        EMAIL: "/email"
     },
     HTTP_STATUSES: {
         OK_200: 200,
