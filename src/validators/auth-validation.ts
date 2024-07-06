@@ -1,5 +1,8 @@
 import {body} from "express-validator";
 
+
+const loginPattern= '^[a-zA-Z0-9_-]*$'
+
 export const loginInputValidation = [
     body('loginOrEmail')
         .isString()

@@ -24,13 +24,13 @@ export const postUserController = async (req: Request, res: Response) => {
     const result = await usersService.createUser(req.body);
 
     if (!result.isSuccessful) {
-        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send(result.errorsMessages);
+        return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send({ errorsMessages: result.errorsMessages });
     }
 
     const user: UserViewModel | null = await usersQueryRepository.findUserById(result.userId!.toString());
 
     if (!user) {
-        return res.status(SETTINGS.HTTP_STATUSES.NOT_FOUND_404).send({message: "User not found"});
+        return res.status(SETTINGS.HTTP_STATUSES.NOT_FOUND_404).send({ message: "User not found" });
     }
 
     return res.status(SETTINGS.HTTP_STATUSES.CREATED_201).send(user);

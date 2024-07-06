@@ -1,6 +1,8 @@
 import {Router} from "express";
 import {confirmValidation, loginInputValidation} from "../validators/auth-validation";
 import {errorsValidationMiddleware} from "../middlewares/errors-validation-middleware";
+import {registrationValidation} from "../validators/user-input-validation";
+
 import {
     authLoginController,
     authMeController,
@@ -17,7 +19,7 @@ authRouter.post('/login', loginInputValidation, errorsValidationMiddleware, auth
 
 authRouter.post('/registration-confirmation', confirmValidation, errorsValidationMiddleware, registrationConfirmationController)
 
-authRouter.post('/registration', loginInputValidation,  errorsValidationMiddleware, registrationController)
+authRouter.post('/registration', registrationValidation,  errorsValidationMiddleware, registrationController)
 
 authRouter.post('/registration-email-resending', registrationEmailResendingController)
 

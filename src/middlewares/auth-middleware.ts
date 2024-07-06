@@ -9,7 +9,7 @@ export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers['authorization'] as string
 
     if (!auth || auth.slice(0, 6) !== 'Basic ') {
-        res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401)
+        res.status(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401).send('first error')
         return;
     }
 
@@ -20,10 +20,9 @@ export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
     const codedAuth = buff2.toString('base64');
 
     if (decodedAuth !== SETTINGS.ADMIN_AUTH) {
-        res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401);
+        res.sendStatus(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401).send('second error');
         return;
     }
-
     next();
 };
 
@@ -45,6 +44,5 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
         req.user = user
         return next()
     }
-
     res.send(SETTINGS.HTTP_STATUSES.NOT_AUTHORIZED_401)
 }

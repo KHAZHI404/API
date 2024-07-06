@@ -27,18 +27,24 @@ export const authMeController = async (req: Request, res: Response) => {
 
     export const registrationController = async (req: Request, res: Response) => {
         const {login, email, password} = req.body
-        const result = await authService.createUserAccount({login, email, password})
 
-        if (!result) return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400)
+        try {
+            const result = await authService.createUserAccount({ login, email, password });
 
-        if (!result.isSuccessful) {
-            return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send(result.errorsMessages);
+            if (!result) {
+                return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send('Failed to create user account');
+            }
+
+            if (!result.isSuccessful) {
+                return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send(result.errorsMessages || 'email already confirmed');
+            }
+
+            return res.status(SETTINGS.HTTP_STATUSES.NO_CONTENT_204).send();
+        } catch (error) {
+            console.error('Error during user registration:', error);
+            return res.status(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400).send(error);
         }
 
-        if (result) {
-            res.status(SETTINGS.HTTP_STATUSES.NO_CONTENT_204)
-        }
-        return res.sendStatus(SETTINGS.HTTP_STATUSES.BAD_REQUEST_400)
     }
 
         export const registrationConfirmationController = async (req: Request, res: Response) => {

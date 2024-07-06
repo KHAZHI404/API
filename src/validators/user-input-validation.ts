@@ -2,7 +2,7 @@ import {body} from "express-validator";
 const patternLogin = /^[a-zA-Z0-9_-]*$/
 const patternEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-export const userValidation = [
+export const registrationValidation = [
     body('login')
         .isString()
         .trim()
