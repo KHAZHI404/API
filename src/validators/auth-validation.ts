@@ -1,7 +1,6 @@
 import {body} from "express-validator";
 
-
-const loginPattern= '^[a-zA-Z0-9_-]*$'
+const patternEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
 export const loginInputValidation = [
     body('loginOrEmail')
@@ -21,4 +20,14 @@ export const confirmValidation = [
         .isString()
         .trim()
         .notEmpty()
+]
+
+
+export const emailValidation = [
+    body('email')
+        .isString()
+        .trim()
+        .notEmpty()
+        .matches(patternEmail)
+        .withMessage('errors in email'),
 ]

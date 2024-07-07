@@ -17,7 +17,7 @@ export const authService = {
         if (existingUserByLogin) {
             return {
                 isSuccessful: false,
-                errorsMessages: [{field: 'login', message: 'login should be unique'}]
+                errorsMessages: [{ message: 'login should be unique', field: 'login'}]
             };
         }
         // Проверка на уникальность email
@@ -25,7 +25,7 @@ export const authService = {
         if (existingUserByEmail) {
             return {
                 isSuccessful: false,
-                errorsMessages: [{field: 'email', message: 'email should be unique'}]
+                errorsMessages: [{ message: 'email should be unique', field: 'email'}]
             };
         }
 

@@ -57,7 +57,7 @@ export const usersQueryRepository = {
     },
 
     async findByLoginOrEmail(loginOrEmail: string) {
-        return await userCollection.findOne({ $or: [ {'userName': loginOrEmail}, {'email': loginOrEmail} ] } )
+        return await userCollection.findOne({ $or: [ {'accountData.userName': loginOrEmail}, {'accountData.email': loginOrEmail} ] } )
     },
 
     async findUserByConfirmationCode(confirmationCode: string) {
@@ -65,7 +65,7 @@ export const usersQueryRepository = {
     },
 
     async findUserById(userId: string): Promise<UserViewModel | null> {
-        const user = await userCollection.findOne({_id: new ObjectId(userId)} )
+        const user: UserDBModel | null = await userCollection.findOne({_id: new ObjectId(userId)} )
         if (user) {
             return userMapper(user)
         }
